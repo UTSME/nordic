@@ -3,4 +3,12 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(bluetooth_testing)
 
+# NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c)
+# NORDIC SDK APP END
+zephyr_include_directories(src)
+
+target_sources(app PRIVATE src/bluetooth_le_scanning.c)
+target_sources(app PRIVATE src/bluetooth_le_discovery.c)
+target_sources(app PRIVATE src/bluetooth_le_connection.c)
+target_sources(app PRIVATE src/bluetooth_le_read_write.c)

@@ -1,0 +1,114 @@
+
+# DEFAULT STUFF FOR NRF9160
+
+CONFIG_SOC_SERIES_NRF52X=y
+CONFIG_SOC_NRF52840_QIAA=y
+CONFIG_BOARD_NRF9160DK_NRF52840=y
+
+# Enable MPU
+CONFIG_ARM_MPU=y
+
+# Enable hardware stack protection
+CONFIG_HW_STACK_PROTECTION=y
+
+# enable uart driver
+CONFIG_SERIAL=y
+
+# enable console
+CONFIG_CONSOLE=y
+CONFIG_UART_CONSOLE=y
+
+
+# https://docs.zephyrproject.org/latest/connectivity/bluetooth/bluetooth-dev.html
+
+# # Host-only build: A Zephyr OS Host build will contain the Application and the BLE Host, 
+# # along with an HCI driver (UART or SPI) to interface with an external Controller chip. 
+# # A build of this type sets the following Kconfig option values:
+# # https://docs.zephyrproject.org/latest/connectivity/bluetooth/bluetooth-arch.html
+# THESE CONFIG OPTIONS DONT WORK
+
+# CONFIG_BT=y
+# CONFIG_BT_HCI=y
+# CONFIG_BT_CTLR=n
+
+# Persistent storage
+# The Bluetooth host stack uses the settings subsystem to implement persistent storage to flash. 
+# This requires the presence of a flash driver and a designated “storage” partition on flash. 
+# A typical set of configuration options needed will look something like the following:
+# https://docs.zephyrproject.org/latest/connectivity/bluetooth/bluetooth-le-host.html
+# NOT SURE IF THIS IS REQUIRED
+
+# CONFIG_BT_SETTINGS=y
+# CONFIG_FLASH=y
+# CONFIG_FLASH_PAGE_LAYOUT=y
+# CONFIG_FLASH_MAP=y
+# CONFIG_NVS=y
+# CONFIG_SETTINGS=y
+
+
+# https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/libraries/bluetooth_services/scan.html#api-documentation
+
+# Use the CONFIG_BT_SCAN Kconfig option to enable the library in the build system.
+CONFIG_BT_SCAN=y
+
+# To receive directed advertising packets through the library, enable one of the following Kconfig options in Zephyr:
+CONFIG_BT_PRIVACY=y
+
+# Enables scanning with filters
+CONFIG_BT_SCAN_FILTER_ENABLE=y
+
+# https://developer.nordicsemi.com/nRF_Connect_SDK/doc/2.5.1/kconfig/index.html#CONFIG_BT_SCAN_UUID_CNT
+CONFIG_BT_SCAN_UUID_CNT=2
+
+
+# https://devzone.nordicsemi.com/f/nordic-q-a/95977/regarding-bluetooth-application-on-nrf9160dk
+
+
+#define BT_UUID_TESTING_VAL_2 \
+        BT_UUID_128_ENCODE(0xbeb5483e, 0x36e1, 0x4688, 0xb7f5, 0xea07361b26a8)
+
+#define BT_UUID_TESTING_2 \
+	BT_UUID_DECLARE_128(BT_UUID_TESTING_VAL_2)
+
+void bluetooth_le_testing_dm_start() {
+	int err;
+
+	err = bt_gatt_dm_start(bluetooth_le_connection_get(), NULL, &bluetooth_le_dm_callback, NULL);
+	if (err) {
+		LOG_ERR("error with test dm %d", err);
+	}
+    else {
+        LOG_INF("dm started");
+	}
+}
+
+
+
+static void bluetooth_le_dm_completed(struct bt_gatt_dm *dm, void *context) {
+	int err;
+	LOG_INF("FOUND SERVICE");
+
+	bt_gatt_dm_data_release(dm);
+	err = bt_gatt_dm_continue(dm, context);
+	if (err) {
+		LOG_ERR("error contiuing, returning");
+		return;
+	}
+
+	const struct bt_gatt_dm_attr *temp = bt_gatt_dm_char_by_uuid(dm, BT_UUID_TESTING_2);
+	if (temp == NULL) {
+		LOG_ERR("error getting char");
+	}
+	else {
+		LOG_INF("got charactersisnais");
+	}
+
+}
+static const struct bt_gatt_dm_cb bluetooth_le_dm_callback = {.completed = &bluetooth_le_dm_completed,
+															  .service_not_found = NULL,
+															  .error_found = NULL};
+
+
+                                                              static uint8_t bluetooth_le_discover_callback(struct bt_conn *conn, const struct bt_gatt_attr *attr, struct bt_gatt_discover_params *params);
+
+															  static void bluetooth_le_dm_completed(struct bt_gatt_dm *dm, void *context);

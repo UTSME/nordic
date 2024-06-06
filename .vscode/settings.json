@@ -1,0 +1,24 @@
+{
+    "files.associations": {
+        "bluetooth.h": "c",
+        "gatt.h": "c",
+        "memory_resource": "c",
+        "cstdlib": "c",
+        "random": "c",
+        "byteorder.h": "c",
+        "scan.h": "c",
+        "log_backend_ble.h": "c",
+        "cstdint": "cpp",
+        "bluetooth_le_scanning.h": "c",
+        "uuid.h": "c",
+        "conn.h": "c",
+        "gatt_dm.h": "c",
+        "bluetooth_le_discovery.h": "c",
+        "l2cap.h": "c",
+        "log.h": "c",
+        "bluetooth_le_read_write.h": "c",
+        "bluetooth_le_connection.h": "c",
+        "util.h": "c",
+        "chrono": "c"
+    }
+}
